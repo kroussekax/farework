@@ -13,4 +13,5 @@ public:
 	void Delete();
 
 	Texture(GLenum texture_type, const char* img_path);
+	Texture();
 };

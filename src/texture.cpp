@@ -32,3 +32,6 @@ Texture::Texture(GLenum texture_type, const char* img_path){
 
 	stbi_image_free(bytes);
 }
+
+Texture::Texture(){
+}
