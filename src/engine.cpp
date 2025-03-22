@@ -18,25 +18,51 @@ void Engine::init_graphics(){
 	glEnable(GL_DEPTH_TEST);
 	Shader shader("res/shaders/vertexshaders.glsl", "res/shaders/fragmentshaders.glsl");
 
-	VAO VAO1;
-	VAO1.bind();
+	Graphics.vao.bind();
 
 	// Generates Vertex Buffer Object and links it to vertices
-	VBO VBO1(Graphics.vertices, sizeof(Graphics.vertices));
+	Graphics.vbo = VBO(Graphics.vertices, sizeof(Graphics.vertices));
 	// Generates Element Buffer Object and links it to indices
-	EBO EBO1(Graphics.indices, sizeof(Graphics.indices));
+	Graphics.ebo = EBO(Graphics.indices, sizeof(Graphics.indices));
 
 	// Links VBO attributes such as coordinates and colors to VAO
-	VAO1.linkAttrib(VBO1, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
-	VAO1.linkAttrib(VBO1, 2, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	Graphics.vao.linkAttrib(Graphics.vbo, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+	Graphics.vao.linkAttrib(Graphics.vbo, 2, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	// unbind all to prevent accidentally modifying them
-	VAO1.unbind();
-	VBO1.unbind();
-	EBO1.unbind();
+	Graphics.vao.unbind();
+	Graphics.vbo.unbind();
+	Graphics.ebo.unbind();
+
+	GameObjects.entities.push_back(DefaultEntity(glm::vec3(0.0f, 0.0f, 0.0f),"res/img/grass.png"));
+
+	for(auto& e : GameObjects.entities){
+		e.texture.bind();
+	}
 }
 
 void Engine::init_matrixes(){
-	GameObjects.camera = Camera(Graphics.shader, GameObjects.entities[0]);
+	GameObjects.camera = Camera(Graphics.shader, GameObjects.entities[0].pos);
+
+	projection = glm::perspective(glm::radians(110.0f), 800.0f / 800.0f, 0.1f, 100.0f);
+
+	// applying mattrices
+	unsigned int modelLoc = glGetUniformLocation(Graphics.shader.get_id(), "model");
+
+	unsigned int projectionLoc = glGetUniformLocation(Graphics.shader.get_id(), "projection");
+	glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+}
+
+void Engine::run(){
+	for(auto& func : startup_functions){
+		func(*this);
+	}
+	std::cout<< "Startup Functions done initializing." << std::endl;
+
+	for(auto& func : update_functions){
+		func(*this);
+	}
+
 }
 
 Engine::Engine(const char* window_name, int initWidth, int initHeight, const char* assetPreFix){
@@ -64,8 +90,6 @@ Engine::Engine(const char* window_name, int initWidth, int initHeight, const cha
 	// Init Functions
 	init_graphics();
 	init_matrixes();
-
-	// StartUp Functions
 }
 
 Engine::Engine(){

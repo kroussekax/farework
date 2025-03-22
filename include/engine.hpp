@@ -20,13 +20,14 @@ private:
 		float *vertices;
 		GLuint *indices;
 
-		VAO VAO;
-		VBO VBO;
-		EBO EBO;
+		VAO vao;
+		VBO vbo;
+		EBO ebo;
 
 		Shader shader;
-
 	}Graphics;
+
+	glm::mat4 projection;
 
 	struct{
 		Camera camera;
@@ -34,13 +35,19 @@ private:
 	}GameObjects;
 
 
-	std::vector<void (*)(Engine)> startupFunction;
-	std::vector<void (*)(Engine)> updateFunction;
+	std::vector<void (*)(Engine)> startup_functions;
+	std::vector<void (*)(Engine)> update_functions;
 
 	void init_graphics();
 	void init_matrixes();
 
 public:
+
+	GLFWwindow* getWindow(){ return window; }
+
+	void add_startup_function(void (*func)(Engine)) { startup_functions.push_back(func); };
+	void add_update_function(void (*func)(Engine)){ update_functions.push_back(func); }
+	void run();
 
 	Engine(const char* window_name, int initWidth, int initHeight, const char* assetPreFix = "");
 
