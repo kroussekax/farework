@@ -49,7 +49,6 @@ public:
 	void add_update_function(void (*func)(Engine)){ update_functions.push_back(func); }
 	void run();
 
-	Engine(const char* window_name, int initWidth, int initHeight, const char* assetPreFix = "");
 
 	Engine();
 };

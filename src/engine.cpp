@@ -54,42 +54,6 @@ void Engine::init_matrixes(){
 }
 
 void Engine::run(){
-	for(auto& func : startup_functions){
-		func(*this);
-	}
-	std::cout<< "Startup Functions done initializing." << std::endl;
-
-	for(auto& func : update_functions){
-		func(*this);
-	}
-
-}
-
-Engine::Engine(const char* window_name, int initWidth, int initHeight, const char* assetPreFix){
-	// Init GLFW
-	glfwInit();
-
-	// *REMEMER THESE*
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	GLFWwindow* window = glfwCreateWindow(initWidth, initHeight, window_name, NULL, NULL);
-	if(window == NULL){ std::cout<< "Failed creating window. " <<std::endl;
-		glfwTerminate();
-	}
-
-	// *MAKE USE OF VARIABLE "window"*
-	glfwMakeContextCurrent(window);
-
-	// Load Glad
-	gladLoadGL();
-	glViewport(0, 0, initWidth, initHeight);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-	// Init Functions
-	init_graphics();
-	init_matrixes();
 }
 
 Engine::Engine(){
